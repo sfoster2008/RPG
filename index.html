@@ -25,9 +25,11 @@
     <div class="row characters"></div>
     <br>
     <div class="row gameplay">
-      <div class="col-md-4 myHero text-center"></div>
+      <div class="col-md-2 myHeroMargin"></div>
+      <div class="col-md-2 myHero text-center"></div>
       <div class="col-md-4 theAction text-center stats"></div>
-      <div class="col-md-4 myEnemy text-center"></div>
+      <div class="col-md-2 myEnemy text-center"></div>
+      <div class="col-md-2 myEnemyMargin"></div>
     </div>    
 
   </div>
@@ -39,22 +41,22 @@
     var charArr = [
       {
         name : "Robot-A",
-        hp : 50,
+        hp : 150,
         image : "./images-robots/robot-a.jpg"
       },
       {
         name : "Robot-B",
-        hp : 60,
+        hp : 160,
         image : "./images-robots/robot-b.jpg"
       },
       {
         name : "Robot-C",
-        hp : 80,
+        hp : 180,
         image : "./images-robots/robot-c.jpg"
       },
       {
         name : "Robot-D",
-        hp : 90,
+        hp : 190,
         image : "./images-robots/robot-d.jpg"
       },
       {
@@ -64,7 +66,7 @@
       },
       {
         name : "Robot-F",
-        hp : 80,
+        hp : 180,
         image : "./images-robots/robot-f.jpg"
       },
     ]
@@ -87,7 +89,7 @@
       isEnemyChosen = false
       var num = Math.floor (12 / charArr.length)
       for (var i=0; i < charArr.length ; i++) {
-        var charThing = $("<div id='character-"+i+"' class='char col-md-"+num+"' value='"+i+"'></div>")
+        var charThing = $("<div id='character-" + i + "' class='char col-md-" + num + "' value='" + i + "'></div>")
         charThing.html(
           "<img src='" + charArr[i].image + "' style='width:120px; height:120px; margin:20px; '/><h3>" + charArr[i].name + "</h3>"
         )
@@ -99,9 +101,9 @@ function fillStats () {
   var attackButton = $("<button type='button' class='btn btn-danger attackbtn'>ATTACK!</button>")
   $(".stats").append("<h3>Press the 'Attack!' Button</h3>")
   $(".stats").append(attackButton)
-  $(".stats").append("<h4 class='hero-hp'>Hero Life: " +chosenHero.hp+ " </h4>")
-  $(".stats").append("<h4 class='enemy-hp'>Enemy Life: " +chosenEnemy.hp+ "</h4>")
-  
+  $(".stats").append("<h4 class='hero-hp'>Hero Life: " + chosenHero.hp + " </h4>")
+  $(".stats").append("<h4 class='enemy-hp'>Enemy Life: " + chosenEnemy.hp + "</h4>")
+  $(".stats").append(resetButton)
 }
 
       $(document).on("click", ".char", function(){
@@ -130,23 +132,76 @@ function fillStats () {
 
     $(document).on("click", ".attackbtn", function(){
       if (isHeroAlive === true && isEnemyAlive === true) {
-        console.log("dude")
-        chosenHero.hp -= Math.floor(Math.random()*20)
-        chosenEnemy.hp -= Math.floor(Math.random()*20)
+        chosenHero.hp -= Math.floor(Math.random()*40)
+        chosenEnemy.hp -= Math.floor(Math.random()*30)
         $(".hero-hp").text("Hero Life: " + chosenHero.hp)
         $(".enemy-hp").text("Enemy Life: " + chosenEnemy.hp)
+
+        if (chosenHero.hp <= 0) {
+          isHeroAlive = false;
+          console.log('game over');
+          console.log('hero:' + isHeroAlive);
+            $(".btn-danger").hide( )
+            $(".stats").append(resetButton)
+            alert("Your hero bit the big one!")
+        }
+        else if (chosenEnemy.hp <= 0 ) {
+          isEnemyAlive = false;
+          console.log('enemy died');
+          console.log('enemy:' + isEnemyAlive);
+            $(".btn-danger").hide( )
+            continuePlay ( )          
+            alert("You have vanquished your enemy!")
+        }
       }
       else if (isHeroAlive === true && isEnemyAlive === false) {
-
-      }
+        $(document).on("click", ".char", function(){
+          chosenEnemy = charArr[$(this).attr("value")]
+            console.log(chosenEnemy)
+            isEnemyChosen = true
+            isEnemyAlive = true
+            $(".myEnemy").append("<h2>Your Enemy!</h2>")
+            $(".myEnemy").append($(this))
+            fillStats() 
+      })
+    }
       else if (isHeroAlive === false && isEnemyAlive === true) {
-
+        $(document).on("click", ".char", function(){
+          if(!isHeroChosen) {
+            chosenHero = charArr[$(this).attr("value")]
+            console.log(chosenHero)
+            isHeroChosen = true
+            isHeroAlive = true
+            $(".myHero").append("<h2>Your Hero!</h2>")
+            $(".myHero").append($(this))
+            fillStats()     
       }
     })
+  }
+});
+  
 
     // reset game function
 
+    var resetButton = $("<button type='button' class='btn btn-primary btn-lg'>Reset</button>")
 
+
+        function continuePlay ( ) {
+            $(".characters").show( )
+            isEnemyChosen = false
+            $("#hh").empty( )
+            enemyHealth = 50
+            $("#eh").empty( )
+            $(".heading").html("<h1>Congratulations! You defeated your enemy! Choose a new one!</h1>")
+            }
+            $(document).on("click", ".btn-primary", function ( ) {
+                location.reload( );   
+        })
+
+    $(document).on("click", ".btn-primary", function ( ) {
+        location.reload( )
+        console.log("Dude")
+    })
 
   </script>
 </body>
